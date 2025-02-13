@@ -1,0 +1,23 @@
+name: Scan
+
+on:
+  workflow_call:
+    
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build an image from Dockerfile
+        run: docker build -t test-github-actions:${{ github.sha }} .
+      - name: Scan
+        uses: aquasecurity/trivy-action@0.29.0
+        with:
+          image: test-github-actions:${{ github.sha }}
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'

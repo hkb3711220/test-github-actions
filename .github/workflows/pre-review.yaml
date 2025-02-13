@@ -1,0 +1,14 @@
+name: Pre-Review
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  linter:
+    uses: ./.github/workflows/linter.yaml
+  
+  scan:
+    needs: linter
+    uses: ./.github/workflows/scan.yaml
