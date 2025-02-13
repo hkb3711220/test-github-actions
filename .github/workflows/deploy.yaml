@@ -2,12 +2,19 @@ name: Deploy
 
 on:
   workflow_dispatch:
-  
+    inputs:
+      environment:
+        description: "Select the environment to deploy to"
+        required: true
+        default: "production"
+        options:
+          - production
+          - staging
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: production
+    environment: ${{ github.event.inputs.environment }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
