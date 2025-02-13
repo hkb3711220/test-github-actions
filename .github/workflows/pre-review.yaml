@@ -8,12 +8,55 @@ on:
 
 jobs:
   linter:
-    uses: ./.github/workflows/linter.yaml
-  
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # super-linter needs the full git history to get the
+          # list of files that changed across commits
+          fetch-depth: 0
+      - name: Super-Linter
+        uses: super-linter/super-linter/slim@v7.2.1 # x-release-please-version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_ALL_CODEBASE: true
+          VALIDATE_ALL_CODEBASE_TIMEOUT: 1000
+          ENABLE_GITHUB_ACTIONS_STEP_SUMMARY: true
+          DISABLE_ERRORS: true
+        timeout-minutes: 10
+
   scan:
-    needs: linter
-    uses: ./.github/workflows/scan.yaml
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build an image from Dockerfile
+        run: docker build -t test-github-actions:${{ github.sha }} .
+      - name: Scan
+        uses: aquasecurity/trivy-action@0.29.0
+        with:
+          image-ref: test-github-actions:${{ github.sha }}
+          format: 'table'
+          exit-code: '0'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
 
   post-message:
     needs: [linter, scan]
-    uses: ./.github/workflows/post-message.yaml
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Post a message
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            text: "*GitHub Action build result*: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+            blocks:
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
