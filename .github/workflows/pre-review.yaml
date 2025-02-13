@@ -37,7 +37,8 @@ jobs:
       - name: Comment PR with Super Linter results
         uses: marocchino/sticky-pull-request-comment@v2
         with:
-          recreate: false
+          header: "Super Linter Results"
+          only_update: true
           GITHUB_TOKEN: ${{ secrets.github_token }}
           path: super-linter-output/super-linter-summary.md
 
@@ -77,7 +78,8 @@ jobs:
       - name: Comment PR with Trivy scan results
         uses: marocchino/sticky-pull-request-comment@v2
         with:
-          recreate: false
+          header: "Trivy Scan Results"
+          only_update: true
           GITHUB_TOKEN: ${{ secrets.github_token }}
           path: formatted-trivy-result.md
 
