@@ -15,6 +15,10 @@ jobs:
   linter:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,6 +34,12 @@ jobs:
           VALIDATE_ALL_CODEBASE_TIMEOUT: 1000
           ENABLE_GITHUB_ACTIONS_STEP_SUMMARY: true
           DISABLE_ERRORS: true
+      - name: Comment PR with Super Linter results
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          recreate: true
+          GITHUB_TOKEN: ${{ secrets.github_token }}
+          path: super-linter-output/super-linter-summary.md
 
   scan:
     runs-on: ubuntu-latest
