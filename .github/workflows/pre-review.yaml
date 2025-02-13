@@ -38,7 +38,6 @@ jobs:
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: "Super Linter Results"
-          only_update: true
           GITHUB_TOKEN: ${{ secrets.github_token }}
           path: super-linter-output/super-linter-summary.md
 
@@ -79,7 +78,6 @@ jobs:
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: "Trivy Scan Results"
-          only_update: true
           GITHUB_TOKEN: ${{ secrets.github_token }}
           path: formatted-trivy-result.md
 
