@@ -14,6 +14,7 @@ on:
 jobs:
   linter:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,10 +30,10 @@ jobs:
           VALIDATE_ALL_CODEBASE_TIMEOUT: 1000
           ENABLE_GITHUB_ACTIONS_STEP_SUMMARY: true
           DISABLE_ERRORS: true
-        timeout-minutes: 10
 
   scan:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       id-token: write
       contents: read
