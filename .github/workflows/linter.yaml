@@ -21,3 +21,4 @@ jobs:
           VALIDATE_ALL_CODEBASE_TIMEOUT: 1000
           ENABLE_GITHUB_ACTIONS_STEP_SUMMARY: true
           DISABLE_ERRORS: true
+        timeout-minutes: 10

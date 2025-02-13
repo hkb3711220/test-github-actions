@@ -15,7 +15,7 @@ jobs:
       - name: Scan
         uses: aquasecurity/trivy-action@0.29.0
         with:
-          image: test-github-actions:${{ github.sha }}
+          image-ref: test-github-actions:${{ github.sha }}
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
