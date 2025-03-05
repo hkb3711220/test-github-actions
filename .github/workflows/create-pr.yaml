@@ -6,11 +6,7 @@ on:
       source_branch:
         description: "Select the source branch"
         required: true
-        type: choice
         default: "main"
-        options:
-          - main
-          - staging
       target_branch:
         description: "Select the target branch the release branch will be merged into"
         required: true
