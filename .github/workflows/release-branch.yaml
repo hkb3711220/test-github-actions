@@ -23,7 +23,7 @@ jobs:
       contents: read
     runs-on: ubuntu-latest
     env:
-      RELEASE_BRANCH: release/${{ github.event.inputs.release_tag }}
+      RELEASE_BRANCH: release-${{ github.event.inputs.release_tag }}
     steps:
       - name: Fail if branch is not main
         if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main'
