@@ -20,7 +20,7 @@ jobs:
   create-pr:
     permissions:
       pull-requests: write
-      contents: read
+      contents: write
     runs-on: ubuntu-latest
     env:
       RELEASE_BRANCH: release-${{ github.event.inputs.release_tag }}-${{ github.event.inputs.target_branch }}
