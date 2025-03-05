@@ -18,6 +18,9 @@ on:
 
 jobs:
   create-pr:
+    permissions:
+      pull-requests: write
+      contents: read
     runs-on: ubuntu-latest
     env:
       RELEASE_BRANCH: release/${{ github.event.inputs.release_tag }}
