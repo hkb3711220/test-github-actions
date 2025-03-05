@@ -10,6 +10,9 @@ on:
         options:
           - production
           - staging
+      release_tag:
+        description: "Select the release tag to deploy"
+        required: true         
 
 jobs:
   deploy:
@@ -18,4 +21,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - run: echo "Deploying..."
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - run: git checkout tags/${{ github.event.inputs.release_tag }} -b main
+      - run: echo "Deploying ${github.event.inputs.release_tag} to ${github.event.inputs.environment}"
