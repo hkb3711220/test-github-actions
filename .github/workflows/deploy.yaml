@@ -23,4 +23,4 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.release_tag }}
-      - run: echo "Deploying ${github.event.inputs.release_tag} to ${github.event.inputs.environment}"
+      - run: echo "Deploying..."
