@@ -40,6 +40,8 @@ jobs:
       - run: gem install --no-document git-pr-release
       - name: Create Release Branch
         run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
           git checkout -b ${{ env.RELEASE_BRANCH }} refs/tags/${{ github.event.inputs.release_tag }}
           git push -u origin ${{ env.RELEASE_BRANCH }}
         env:
