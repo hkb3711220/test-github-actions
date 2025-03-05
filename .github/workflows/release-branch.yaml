@@ -1,0 +1,44 @@
+name: Create Release Branch
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Select the release tag to create a release branch"
+        required: true
+      target_branch:
+        description: "Select the target branch the release branch will be merged into"
+        required: true
+        default: "staging"
+        type: choice
+        options:
+          - staging
+          - production
+
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_BRANCH: release/${{ github.event.inputs.release_tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.inputs.release_tag }}
+      - uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 3.1
+      - run: gem install --no-document git-pr-release
+      - name: Create Release Branch
+        run: |
+          git checkout -b ${{ env.RELEASE_BRANCH }}
+          git push origin ${{ env.RELEASE_BRANCH }}
+      - name: Create PR
+        run: git-pr-release --squash
+        with:
+          GIT_PR_RELEASE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_PR_RELEASE_BRANCH_STAGING: ${{ env.RELEASE_BRANCH }}
+          GIT_PR_RELEASE_BRANCH_PRODUCTION: ${{github.event.inputs.target_branch}}
+          GIT_PR_RELEASE_LABEL: "${{ github.event.inputs.target_branch }}-release"
+          TZ: Asia/Tokyo
