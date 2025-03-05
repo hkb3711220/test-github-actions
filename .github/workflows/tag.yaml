@@ -22,5 +22,6 @@ jobs:
         uses: anothrNick/github-tag-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: ${{ ((contains(github.event.pull_request.head.ref, 'bugfix') || contains(github.event.pull_request.head.ref, 'hotfix')) && 'patch') || 'minor' }}
           WITH_V: true
           RELEASE_BRANCHES: main
