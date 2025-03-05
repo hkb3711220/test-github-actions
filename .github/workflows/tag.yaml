@@ -1,0 +1,26 @@
+name: Tag
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Tag
+        uses: anothrNick/github-tag-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: ${{ ((contains(github.event.pull_request.head.ref, 'bugfix') || contains(github.event.pull_request.head.ref, 'hotfix')) && 'patch') || 'minor' }}
+          WITH_V: true
+          RELEASE_BRANCHES: main
+          INITIAL_VERSION: v0.0.0
