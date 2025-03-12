@@ -23,7 +23,7 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     env:
-      RELEASE_BRANCH: release-${{ github.event.inputs.release_tag }}
+      RELEASE_BRANCH: "release-${{ github.event.inputs.release_tag }}-${{ github.event.inputs.target_branch }}"
     steps:
       - name: Fail if branch is not main
         if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main'
@@ -38,11 +38,11 @@ jobs:
         with:
           ruby-version: 3.3
       - run: gem install --no-document git-pr-release
-      - uses: peterjgrainger/action-create-branch@v2.2.0
+      - name: Create Release Branch
+        run: |
+          git push origin ${{ env.RELEASE_BRANCH }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          branch: ${{ env.RELEASE_BRANCH }}
       - name: Create PR
         run: git-pr-release --squash
         env:
