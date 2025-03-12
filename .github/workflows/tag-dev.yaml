@@ -31,5 +31,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CUSTOM_TAG: ${{ env.CUSTOM_TAG }}
-
+          RELEASE_BRANCHES: staging
 
