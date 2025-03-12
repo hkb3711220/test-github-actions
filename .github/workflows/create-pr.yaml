@@ -1,11 +1,16 @@
-name: Create Release Branch
+name: Create Pull Request for Release
 
 on:
   workflow_dispatch:
     inputs:
-      release_tag:
-        description: "Select the release tag to create a release branch"
+      source_branch:
+        description: "Select the source branch"
         required: true
+        type: choice
+        default: "main"
+        options:
+          - main
+          - staging
       target_branch:
         description: "Select the target branch the release branch will be merged into"
         required: true
@@ -22,32 +27,20 @@ jobs:
       pull-requests: write
       contents: write
     runs-on: ubuntu-latest
-    env:
-      RELEASE_BRANCH: release-${{ github.event.inputs.release_tag }}
     steps:
-      - name: Fail if branch is not main
-        if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main'
-        run: |
-          echo "This workflow should not be triggered with workflow_dispatch on a branch other than main"
-          exit 1
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ github.event.inputs.release_tag }}
+          ref: ${{ github.event.inputs.source_branch }}
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.3
       - run: gem install --no-document git-pr-release
-      - uses: peterjgrainger/action-create-branch@v2.2.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          branch: ${{ env.RELEASE_BRANCH }}
       - name: Create PR
         run: git-pr-release --squash
         env:
           GIT_PR_RELEASE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GIT_PR_RELEASE_BRANCH_STAGING: ${{ env.RELEASE_BRANCH }}
+          GIT_PR_RELEASE_BRANCH_STAGING: ${{ github.event.inputs.source_branch }}
           GIT_PR_RELEASE_BRANCH_PRODUCTION: ${{github.event.inputs.target_branch}}
           GIT_PR_RELEASE_LABEL: "${{ github.event.inputs.target_branch }}-release"
           TZ: Asia/Tokyo
