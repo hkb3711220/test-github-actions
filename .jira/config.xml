@@ -1,0 +1,9 @@
+deployments:
+  environmentMapping:
+    development:
+      - "develope"
+    staging:
+      - "staging"
+    production:
+      - "production"
+    
