@@ -11,8 +11,8 @@ on:
         options:
           - production
           - staging
-      release_tag:
-        description: "Select the release tag to deploy"
+      release_branch_name:
+        description: "Select the release branch name to deploy"
         required: true         
 
 jobs:
@@ -23,5 +23,5 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.release_tag }}
+          ref: ${{ github.event.inputs.release_branch_name }}
       - run: cat version.txt
