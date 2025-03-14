@@ -1,4 +1,4 @@
-name: Deploy
+name: AutomaticDeploy
 
 on:
   pull_request:
