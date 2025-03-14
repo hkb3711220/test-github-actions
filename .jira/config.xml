@@ -6,4 +6,3 @@ deployments:
       - "staging"
     production:
       - "production"
-    
