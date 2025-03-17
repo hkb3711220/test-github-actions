@@ -1,4 +1,4 @@
-name: AutomaticDeploy
+name: Automatic Deploy
 
 on:
   pull_request:
@@ -11,6 +11,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: ${{ github.base_ref }}
+    if: github.event.pull_request.merged == true
     steps:
       - name: Checkout
         uses: actions/checkout@v4

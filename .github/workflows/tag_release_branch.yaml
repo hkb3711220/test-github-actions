@@ -1,0 +1,56 @@
+name: Tag Release Branch
+
+on:
+  pull_request:
+    branches:
+      - staging
+      - production
+    types:
+      - closed
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    if: github.event.pull_request.merged == true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          fetch-depth: 0
+      - name: Extract version from branch name
+        run: |
+          SOURCE_BRANCH="${{ github.event.pull_request.head.ref }}"
+          TARGET_BRANCH="${{ github.event.pull_request.base.ref }}"
+          
+          # Only proceed for staging or production target branches
+          if [ "$TARGET_BRANCH" = "staging" ] || [ "$TARGET_BRANCH" = "production" ]; then
+            # Extract version from KAN-1-release-xxx format
+            if [[ $SOURCE_BRANCH == *-release-* ]]; then
+              # Get everything after "release-"
+              VERSION=${SOURCE_BRANCH##*release-}
+              
+              if [ "$TARGET_BRANCH" = "production" ]; then
+                # For production, use -stable suffix
+                echo "CUSTOM_TAG=${VERSION}-stable" >> $GITHUB_ENV
+              else
+                # For staging
+                echo "CUSTOM_TAG=${VERSION}-rc" >> $GITHUB_ENV
+              fi
+            else
+              # Fallback if branch doesn't match expected format
+              echo "CUSTOM_TAG=${SOURCE_BRANCH}" >> $GITHUB_ENV
+            fi
+            echo "SHOULD_TAG=true" >> $GITHUB_ENV
+          else
+            echo "Target branch is not staging or production, skipping tagging"
+            echo "SHOULD_TAG=false" >> $GITHUB_ENV
+          fi
+      - name: Tag
+        if: env.SHOULD_TAG == 'true'
+        uses: anothrNick/github-tag-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CUSTOM_TAG: ${{ env.CUSTOM_TAG }}
+          RELEASE_BRANCHES: ${{ github.event.pull_request.base.ref }}
