@@ -1,4 +1,4 @@
-name: Deploy
+name: Deploy by Tag
 
 on:
   workflow_dispatch:
@@ -11,8 +11,8 @@ on:
         options:
           - production
           - staging
-      release_branch_name:
-        description: "Select the release branch name to deploy"
+      release_branch_tag:
+        description: "Select the release branch tag to deploy"
         required: true         
 
 jobs:
@@ -23,7 +23,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.release_branch_name }}
+          ref: ${{ github.event.inputs.release_branch_tag }}
       - run: cat version.txt
       - run: |
           echo '1' $GITHUB_REF
