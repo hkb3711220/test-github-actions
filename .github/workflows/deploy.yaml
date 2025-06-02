@@ -18,8 +18,17 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment }}
     steps:
+      - uses: trstringer/manual-approval@v1
+        if: ${{ github.event.inputs.environment == 'production' }}
+        with:
+          secret: ${{ github.TOKEN }}
+          approvers: hkb3711220
+          minimum-approvals: 1
+          exclude-workflow-initiator-as-approver: false
+          fail-on-denial: true
+          additional-approved-words: ''
+          additional-denied-words: ''
       - name: Checkout
         uses: actions/checkout@v4
         with:
